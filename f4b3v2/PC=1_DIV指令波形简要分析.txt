@@ -1,0 +1,146 @@
+PC=01H时DIV指令的测试波形简要分析
+
+一、指令及初始状态
+
+程序存储器01H单元内容为0DA1H：
+  操作码：0DH，表示DIV指令；
+  地址码：A1H，表示除数存放在RAM的A1H单元。
+
+执行本指令前：
+  PC=01H；
+  ACC=03E8H=1000；
+  RAM[A1H]=01F4H=500。
+
+因此本条指令完成的操作为：
+  ACC <- ACC / RAM[A1H] = 1000 / 500 = 2，
+  最终ACC应变为0002H。
+
+二、微程序执行路径
+
+本指令对应的微地址变化为：
+  00H -> 01H -> 02H -> 0FH -> 50H -> 51H -> 52H -> 53H -> 00H
+
+波形中的CAROUT与CONTROLIN正好按上述顺序变化。
+
+三、各微指令的数据流和控制信号
+
+1. 微地址00H，微指令00810000H：取指地址送存储器
+
+  有效控制信号：R=1，CARc=0001。
+  微操作：R=1，CAR <- CAR+1。
+
+  此时上一条指令结束时已执行MAR <- PC，因此：
+  PCOUT=01H，MAROUT=01H。
+  RAM以MAROUT=01H作为地址，输出RAMOUT=0DA1H。
+  CAR由00H变为01H。
+
+  数据流：
+  PC(01H) -> MAR(01H) -> RAM地址端；
+  RAM[01H](0DA1H) -> RAMOUT/MBR输入端。
+
+2. 微地址01H，微指令00A00000H：装入操作码
+
+  有效控制信号：MBR_OPc=1，CARc=0001。
+  微操作：OP <- MBR[15..8]，CAR <- CAR+1。
+
+  MBR从RAM输出0DA1H中取高8位0DH送入操作码通路，
+  因而IROUT=0DH；低8位A1H作为指令地址码保留在MBR地址通路中。
+  CAR由01H变为02H。
+
+  数据流：
+  RAMOUT(0DA1H) -> MBR；
+  MBR[15..8](0DH) -> OP/IROUT；
+  MBR[7..0](A1H) -> MBR_MAR地址通路。
+
+3. 微地址02H，微指令02000000H：操作码译码
+
+  有效控制信号：CARc=0100。
+  微操作：CAR <- CAR+OP。
+
+  当前CAR=02H，OP=0DH，所以：
+  CAR=02H+0DH=0FH。
+
+  数据流：
+  OP(0DH)和CAR(02H)进入微地址形成逻辑，产生微地址0FH。
+
+4. 微地址0FH，微指令01000050H：转入DIV微程序
+
+  有效控制信号：CARc=0010，直接地址字段CAR=50H。
+  微操作：CAR <- 50H。
+
+  操作码0DH经译码入口0FH跳到DIV微程序首地址50H。
+
+5. 微地址50H，微指令00840000H：形成除数地址
+
+  有效控制信号：MBR_MARc=1，CARc=0001。
+  微操作：MAR <- MBR[7..0]，CAR <- CAR+1。
+
+  MBR低8位为A1H，因此MAROUT由01H变为A1H。
+  RAM地址随之变为A1H，RAMOUT由指令0DA1H变为01F4H。
+  CAR由50H变为51H。
+
+  数据流：
+  MBR[7..0](A1H) -> MAR(A1H) -> RAM地址端；
+  RAM[A1H](01F4H) -> RAMOUT。
+
+6. 微地址51H，微指令00810200H：读取除数并修改PC
+
+  有效控制信号：R=1，PCinc=1，CARc=0001。
+  微操作：MBR <- RAM[A1H]，PC <- PC+1，CAR <- CAR+1。
+
+  RAM输出01F4H被送入MBR的BR数据通路，波形中BRIN变为01F4H；
+  PCOUT由01H增加为02H，提前指向下一条机器指令；
+  CAR由51H变为52H。
+
+  数据流：
+  RAM[A1H](01F4H) -> RAMOUT -> MBR_BR/BRIN；
+  PC(01H) -> PC(02H)。
+
+7. 微地址52H，微指令00C0C000H：执行加减交替除法
+
+  有效控制信号：MBR_BRc=1，aluCONTR=1100，CARc=0001。
+  波形显示：ALUIN=CH，BRIN=01F4H，BROUT随后变为01F4H。
+
+  微操作：
+  BR <- MBR；
+  ACC <- div_add_sub(ACC,BR)；
+  CAR <- CAR+1。
+
+  BR装入除数01F4H。ALU检测到控制码1100后调用div_add_sub函数，
+  以ACC=03E8H为被除数、BR=01F4H为除数，执行16轮非恢复余数除法：
+  部分余数非负时减除数，部分余数为负时加除数；
+  每轮左移并根据新余数符号形成一位商。
+
+  计算结果：03E8H / 01F4H = 0002H，余数为0000H。
+  在clk下降沿，ALU将商0002H写回ACC；CAR由52H变为53H。
+
+  数据流：
+  MBR_BR(01F4H) -> BR(01F4H) -> ALU除数输入；
+  ACC(03E8H) -> ALU被除数输入；
+  ALU加减交替除法结果(0002H) -> ACC。
+
+  注意：源码中的16轮循环在组合逻辑中展开，外部微程序只需一个DIV执行微周期，
+  并不是CAR在52H停留16个时钟周期。
+
+8. 微地址53H，微指令04080000H：结束本指令并返回取指周期
+
+  有效控制信号：PC_MARc=1，CARc=1000。
+  微操作：MAR <- PC，CAR <- 00H。
+
+  此时PC已经为02H，所以MAROUT由A1H变为02H，准备读取下一条指令；
+  CAR回到00H，重新进入公共取指微程序。
+
+  数据流：
+  PC(02H) -> MAR(02H) -> RAM地址端；
+  CAR(53H) -> CAR(00H)。
+
+四、波形结论
+
+当PC=01H时，CPU从RAM[01H]取出0DA1H，并译码为DIV A1H。
+地址码A1H经MBR送入MAR，RAM[A1H]输出除数01F4H；
+除数经MBR和BR送入ALU，被除数为原ACC中的03E8H。
+ALUIN=CH时执行加减交替法除法，最终将商0002H写回ACC。
+与此同时PC由01H增加到02H，最后MAR<-PC、CAR<-00H，开始下一条指令。
+
+时序上，CAR和MAR主要在clk上升沿更新，PC和ACC在clk下降沿更新，
+MBR的数据锁存由更快的clkMBR配合完成，从而保证地址、存储器数据和运算数据依次稳定传递。

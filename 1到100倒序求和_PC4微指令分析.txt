@@ -1,0 +1,89 @@
+1到100倒序求和程序中PC=4时的指令与数据流分析
+
+一、机器指令
+
+PC=04时，从RAM[04]取出的机器指令为02A4。
+
+02：LOAD操作码。
+A4：操作数地址，也是累加和sum的存储地址。
+
+因此，02A4表示：LOAD A4，即把RAM[A4]中保存的当前累加和装入ACC，为下一条ADD A3做准备。
+
+图示时刻RAM[A4]中的值为0000H，因此执行结束后ACC=0000H。在后续循环中，RAM[A4]会保存不断更新的累加和。
+
+二、微指令及控制信号
+
+1. CONTROLIN=00810000，CAR=00
+
+控制操作：R=1，CAR<-CAR+1。
+PC状态：PCOUT=04。
+地址总线：MAROUT=04，指向机器指令地址RAM[04]。
+数据总线：RAMOUT输出02A4。
+微地址变化：CAR由00变为01。
+
+2. CONTROLIN=00A00000，CAR=01
+
+控制操作：MBR_OPc=1，OP<-MBR[15..8]，CAR<-CAR+1。
+寄存器变化：从02A4的高8位取出操作码02，送入OP/IROUT。
+微地址变化：CAR由01变为02。
+
+3. CONTROLIN=02000000，CAR=02
+
+控制操作：CAR<-CAR+OP。
+微地址计算：02H+02H=04H。
+微地址变化：CAR由02跳到04，进入LOAD指令分派入口。
+
+4. CONTROLIN=01000019，CAR=04
+
+控制操作：CAR<-19H。
+微地址变化：CAR由04跳到19H，进入LOAD执行微程序。
+
+5. CONTROLIN=00840000，CAR=19
+
+控制操作：MBR_MARc=1，MAR<-MBR[7..0]，CAR<-CAR+1。
+地址变化：从02A4的低8位取出A4，送入MAR。
+地址总线：MAROUT由04变为A4，准备访问RAM[A4]中的当前累加和。
+微地址变化：CAR由19H变为1AH。
+
+6. CONTROLIN=00810A00，CAR=1A
+
+控制操作：PCinc=1，R=1，ACCclear=1，CAR<-CAR+1。
+PC变化：PC由04变为05，指向下一条机器指令03A3，即ADD A3。
+存储器操作：读取RAM[A4]，RAMOUT输出当前累加和。
+寄存器变化：ACC先清零，为通过加法实现LOAD操作做准备。
+微地址变化：CAR由1AH变为1BH。
+
+7. CONTROLIN=00C03000，CAR=1B
+
+控制操作：MBR_BRc=1，ALU控制码为0011，CAR<-CAR+1。
+数据流动：RAM[A4]中的当前累加和经MBR送入BR。
+ALU操作：ACC<-ACC+BR。
+由于前一条微指令已经把ACC清零，因此该操作等价于ACC<-RAM[A4]。
+图示时刻RAM[A4]=0000H，所以ACC=0000H。
+微地址变化：CAR由1BH变为1CH。
+
+8. CONTROLIN=04080000，CAR=1C
+
+控制操作：PC_MARc=1，CARc=1000。
+微地址变化：CAR<-00，返回公共取指微程序。
+地址变化：MAR<-PC=05，地址总线指向下一条机器指令RAM[05]。
+
+三、完整变化过程
+
+CAR微地址：00->01->02->04->19->1A->1B->1C->00。
+PC程序地址：04->05。
+地址总线MAROUT：04->A4->05。
+读数据总线RAMOUT：02A4->RAM[A4]中的当前累加和->03A3。
+BR：接收RAM[A4]中的当前累加和。
+ACC：先清零，再装入RAM[A4]中的当前累加和。
+
+四、执行结果及作用
+
+PC=4时执行LOAD A4，将RAM[A4]中保存的当前累加和装入ACC。
+执行结束后，PC=05，MAR=05，CAR返回00。
+下一条机器指令为RAM[05]=03A3，即ADD A3，把当前计数值加入ACC。
+
+因此，PC=4和PC=5共同完成循环中的核心累加过程：
+
+PC=4：ACC<-RAM[A4]，取出当前sum。
+PC=5：ACC<-ACC+RAM[A3]，执行sum+counter。

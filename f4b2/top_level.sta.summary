@@ -1,0 +1,149 @@
+------------------------------------------------------------
+Timing Analyzer Summary
+------------------------------------------------------------
+
+Type  : Slow 1100mV 85C Model Setup 'lpm_rom:inst8|altrom:srom|altsyncram:rom_block|altsyncram_j671:auto_generated|ram_block1a0~PORT_A_WRITE_ENABLE_REG'
+Slack : -9.221
+TNS   : -141.774
+
+Type  : Slow 1100mV 85C Model Setup 'clk'
+Slack : -6.322
+TNS   : -157.499
+
+Type  : Slow 1100mV 85C Model Setup 'clkMBR'
+Slack : -4.991
+TNS   : -239.467
+
+Type  : Slow 1100mV 85C Model Hold 'clk'
+Slack : -3.695
+TNS   : -93.202
+
+Type  : Slow 1100mV 85C Model Hold 'clkMBR'
+Slack : -2.860
+TNS   : -114.916
+
+Type  : Slow 1100mV 85C Model Hold 'lpm_rom:inst8|altrom:srom|altsyncram:rom_block|altsyncram_j671:auto_generated|ram_block1a0~PORT_A_WRITE_ENABLE_REG'
+Slack : 5.734
+TNS   : 0.000
+
+Type  : Slow 1100mV 85C Model Minimum Pulse Width 'clkMBR'
+Slack : -3.166
+TNS   : -252.152
+
+Type  : Slow 1100mV 85C Model Minimum Pulse Width 'clk'
+Slack : -0.724
+TNS   : -48.490
+
+Type  : Slow 1100mV 85C Model Minimum Pulse Width 'lpm_rom:inst8|altrom:srom|altsyncram:rom_block|altsyncram_j671:auto_generated|ram_block1a0~PORT_A_WRITE_ENABLE_REG'
+Slack : 0.323
+TNS   : 0.000
+
+Type  : Slow 1100mV 0C Model Setup 'lpm_rom:inst8|altrom:srom|altsyncram:rom_block|altsyncram_j671:auto_generated|ram_block1a0~PORT_A_WRITE_ENABLE_REG'
+Slack : -9.092
+TNS   : -139.280
+
+Type  : Slow 1100mV 0C Model Setup 'clk'
+Slack : -6.335
+TNS   : -154.311
+
+Type  : Slow 1100mV 0C Model Setup 'clkMBR'
+Slack : -5.166
+TNS   : -238.769
+
+Type  : Slow 1100mV 0C Model Hold 'clk'
+Slack : -3.792
+TNS   : -99.981
+
+Type  : Slow 1100mV 0C Model Hold 'clkMBR'
+Slack : -3.119
+TNS   : -122.659
+
+Type  : Slow 1100mV 0C Model Hold 'lpm_rom:inst8|altrom:srom|altsyncram:rom_block|altsyncram_j671:auto_generated|ram_block1a0~PORT_A_WRITE_ENABLE_REG'
+Slack : 5.333
+TNS   : 0.000
+
+Type  : Slow 1100mV 0C Model Minimum Pulse Width 'clkMBR'
+Slack : -3.166
+TNS   : -254.060
+
+Type  : Slow 1100mV 0C Model Minimum Pulse Width 'clk'
+Slack : -0.724
+TNS   : -45.120
+
+Type  : Slow 1100mV 0C Model Minimum Pulse Width 'lpm_rom:inst8|altrom:srom|altsyncram:rom_block|altsyncram_j671:auto_generated|ram_block1a0~PORT_A_WRITE_ENABLE_REG'
+Slack : 0.210
+TNS   : 0.000
+
+Type  : Fast 1100mV 85C Model Setup 'lpm_rom:inst8|altrom:srom|altsyncram:rom_block|altsyncram_j671:auto_generated|ram_block1a0~PORT_A_WRITE_ENABLE_REG'
+Slack : -4.299
+TNS   : -63.640
+
+Type  : Fast 1100mV 85C Model Setup 'clk'
+Slack : -1.940
+TNS   : -51.274
+
+Type  : Fast 1100mV 85C Model Setup 'clkMBR'
+Slack : -1.898
+TNS   : -63.956
+
+Type  : Fast 1100mV 85C Model Hold 'clk'
+Slack : -1.546
+TNS   : -44.299
+
+Type  : Fast 1100mV 85C Model Hold 'clkMBR'
+Slack : -1.375
+TNS   : -61.180
+
+Type  : Fast 1100mV 85C Model Hold 'lpm_rom:inst8|altrom:srom|altsyncram:rom_block|altsyncram_j671:auto_generated|ram_block1a0~PORT_A_WRITE_ENABLE_REG'
+Slack : 2.812
+TNS   : 0.000
+
+Type  : Fast 1100mV 85C Model Minimum Pulse Width 'clkMBR'
+Slack : -2.174
+TNS   : -114.468
+
+Type  : Fast 1100mV 85C Model Minimum Pulse Width 'clk'
+Slack : -0.096
+TNS   : -3.257
+
+Type  : Fast 1100mV 85C Model Minimum Pulse Width 'lpm_rom:inst8|altrom:srom|altsyncram:rom_block|altsyncram_j671:auto_generated|ram_block1a0~PORT_A_WRITE_ENABLE_REG'
+Slack : 0.292
+TNS   : 0.000
+
+Type  : Fast 1100mV 0C Model Setup 'lpm_rom:inst8|altrom:srom|altsyncram:rom_block|altsyncram_j671:auto_generated|ram_block1a0~PORT_A_WRITE_ENABLE_REG'
+Slack : -3.809
+TNS   : -56.459
+
+Type  : Fast 1100mV 0C Model Setup 'clk'
+Slack : -1.744
+TNS   : -45.099
+
+Type  : Fast 1100mV 0C Model Setup 'clkMBR'
+Slack : -1.726
+TNS   : -54.622
+
+Type  : Fast 1100mV 0C Model Hold 'clk'
+Slack : -1.508
+TNS   : -45.596
+
+Type  : Fast 1100mV 0C Model Hold 'clkMBR'
+Slack : -1.368
+TNS   : -63.625
+
+Type  : Fast 1100mV 0C Model Hold 'lpm_rom:inst8|altrom:srom|altsyncram:rom_block|altsyncram_j671:auto_generated|ram_block1a0~PORT_A_WRITE_ENABLE_REG'
+Slack : 2.598
+TNS   : 0.000
+
+Type  : Fast 1100mV 0C Model Minimum Pulse Width 'clkMBR'
+Slack : -2.174
+TNS   : -115.503
+
+Type  : Fast 1100mV 0C Model Minimum Pulse Width 'clk'
+Slack : -0.099
+TNS   : -3.862
+
+Type  : Fast 1100mV 0C Model Minimum Pulse Width 'lpm_rom:inst8|altrom:srom|altsyncram:rom_block|altsyncram_j671:auto_generated|ram_block1a0~PORT_A_WRITE_ENABLE_REG'
+Slack : 0.288
+TNS   : 0.000
+
+------------------------------------------------------------
